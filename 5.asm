@@ -1,6 +1,8 @@
 ;BGGP5 - Jun 23, 2024
 ;@fliermate
 ;
+; Revision 2 - 596 bytes (July 4, 2024)
+;
 ;Compile with FASM2
 ;
 ;Noticeable changes are:
@@ -164,6 +166,8 @@ section Section.1
 
         EntryPoint:
 
+        mov     ebp, esp
+        sub     esp, 64
         push    0
         push    0
         push    _file
@@ -179,21 +183,21 @@ section Section.1
         push    80000000h     ;GENERIC_READ
         push    _file
         call    [CreateFileA]
-        mov     dword [_in], eax
+        ;mov     dword [_in], eax
 
         push    0
-        push    _read
+        push    0         ;_read
         push    58
-        push    _buffer
-        push    [_in]
+        push    ebp       ;_buffer
+        push    eax       ;[_in]
         call    [ReadFile]
 
-        push    [_in]
-        call    [CloseHandle]
+        ;push    [_in]
+        ;call    [CloseHandle]
 
         push    0x40
         push    _file
-        push    _buffer
+        push    ebp       ;_buffer
         push    0
         call    [MessageBoxA]
 
@@ -238,14 +242,14 @@ section Section.2
                                 dd ExitProcessLookup-IMAGE_BASE
                                 dd CreateFileALookup-IMAGE_BASE
                                 dd ReadFileLookup-IMAGE_BASE
-                                dd CloseHandleLookup-IMAGE_BASE
+                                ;dd CloseHandleLookup-IMAGE_BASE
                                 dd 0
 
                 KernelAddressTable:
                 ExitProcess     dd ExitProcessLookup-IMAGE_BASE ; this is going to be replaced with the address of the function
                 CreateFileA     dd CreateFileALookup-IMAGE_BASE ; this is going to be replaced with the address of the function
                 ReadFile        dd ReadFileLookup-IMAGE_BASE ; this is going to be replaced with the address of the function
-                CloseHandle     dd CloseHandleLookup-IMAGE_BASE ; this is going to be replaced with the address of the function
+                ;CloseHandle     dd CloseHandleLookup-IMAGE_BASE ; this is going to be replaced with the address of the function
                                 dd 0
  
                 UrlMonLookupTable:
@@ -281,10 +285,10 @@ section Section.2
                         .Name   db 'ReadFile',0
                                 align 2
 
-                CloseHandleLookup:
-                        .Hint   dw 0
-                        .Name   db 'CloseHandle',0
-                                align 2
+                ;CloseHandleLookup:
+                ;        .Hint   dw 0
+                ;        .Name   db 'CloseHandle',0
+                ;                align 2
 
                 URLDownloadToFileALookup:
                         .Hint   dw 0
@@ -302,10 +306,10 @@ section Section.2
  
         ImportTable.End:
 
-        _buffer  rb 58
-                 db 0
-        _read    dd ?
-        _in      dd ?
+        ;_buffer  rb 58
+        ;         db 0
+        ;_read    dd ?
+        ;_in      dd ?
         _url     db 'https://binary.golf/5/'  ;Special trick by @bitshifter
         _file    db '5',0
 
