@@ -166,8 +166,8 @@ section Section.1
 
         EntryPoint:
 
-        mov     ebp, esp
         sub     esp, 64
+        mov     ebp, esp
         push    0
         push    0
         push    _file
